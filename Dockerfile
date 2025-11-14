@@ -19,6 +19,12 @@ FROM alpine:3.20
 
 RUN apk add --no-cache ca-certificates
 
+# Create non-root user
+RUN addgroup -g 1000 -S webhook && \
+    adduser -u 1000 -S webhook -G webhook
+
 COPY --from=build /workspace/webhook /usr/local/bin/webhook
+
+USER webhook
 
 ENTRYPOINT ["webhook"]
