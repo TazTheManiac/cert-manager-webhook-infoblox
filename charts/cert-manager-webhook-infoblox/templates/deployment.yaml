@@ -23,6 +23,7 @@ spec:
       serviceAccountName: {{ include "webhook.fullname" . }}
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
