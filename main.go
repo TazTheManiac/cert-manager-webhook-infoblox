@@ -34,7 +34,7 @@ import (
 
 const (
 	// solverName is the unique identifier for this DNS solver within the group.
-	solverName = "infoblox-wapi"
+	solverName = "infoblox"
 
 	// default configuration values.
 	defaultPort                = "443"

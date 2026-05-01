@@ -122,7 +122,7 @@ func (m *mockIBConnector) UpdateObject(_ ibclient.IBObject, _ string) (string, e
 
 func TestName(t *testing.T) {
 	s := &infobloxDNSSolver{}
-	assert.Equal(t, "infoblox-wapi", s.Name())
+	assert.Equal(t, "infoblox", s.Name())
 }
 
 // ────────────────────────────────────────────────────────────────────────────

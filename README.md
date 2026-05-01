@@ -61,7 +61,7 @@ spec:
       - dns01:
           webhook:
             groupName: acme.yourcompany.com   # must match Helm groupName
-            solverName: infoblox-wapi
+            solverName: infoblox
             config:
               host: infoblox.yourcompany.com
               view: External
@@ -144,20 +144,16 @@ make docker-build-push IMAGE_TAG=1.2.3
 
 ```
 .
-├── main.go                  # Webhook solver implementation
-├── main_unit_test.go        # Unit tests (mock Infoblox connector)
-├── main_test.go             # Conformance integration test (build tag: integration)
+├── main.go                               # Webhook solver implementation
+├── main_unit_test.go                     # Unit tests (mock Infoblox connector)
+├── main_test.go                          # Conformance integration test (build tag: integration)
 ├── go.mod / go.sum
 ├── Makefile
 ├── Dockerfile
 ├── charts/
-│   └── cert-manager-webhook-infoblox/   # Helm chart
+│   └── cert-manager-webhook-infoblox/    # Helm chart
 └── testdata/
     └── infoblox/
-        ├── config.json.sample           # Webhook config template
-        └── credentials.yaml.sample     # Kubernetes Secret template
+        ├── config.json.sample            # Webhook config template
+        └── credentials.yaml.sample       # Kubernetes Secret template
 ```
-
-## License
-
-Apache 2.0 — see [LICENSE](LICENSE).

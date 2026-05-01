@@ -1,8 +1,8 @@
 apiVersion: v2
 name: cert-manager-webhook-infoblox
 type: application
-version: 1.0.0
-appVersion: "1.0.0"
+version: 2.0.0
+appVersion: "2.0.0"
 description: cert-manager DNS01 webhook solver for Infoblox WAPI
 home: https://github.com/tazthemaniac/cert-manager-webhook-infoblox
 keywords:

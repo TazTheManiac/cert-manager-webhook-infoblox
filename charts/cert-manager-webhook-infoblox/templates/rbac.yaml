@@ -124,6 +124,7 @@ subjects:
     kind: ServiceAccount
     name: {{ include "webhook.fullname" . }}
     namespace: {{ .Release.Namespace }}
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:

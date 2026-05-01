@@ -7,7 +7,7 @@
 #
 # This group name should be UNIQUE.  Using your own company's domain is
 # recommended.
-groupName: acme.mycompany.com
+groupName: ""
 
 replicaCount: 1
 
