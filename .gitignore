@@ -1,29 +1,23 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-.idea
-# Test binary, build with `go test -c`
+# ── Binaries / build artefacts ────────────────────────────────────────────────
+/webhook
+/_out/
+/bin/
+coverage.out
+coverage.html
+
+# ── Go toolchain ──────────────────────────────────────────────────────────────
 *.test
+*.prof
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
+# ── Editor / OS ───────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
 
-# Ignore the built binary
-cert-manager-webhook-example
-
-# Make artifacts
-_out
-_test
-
-# Ignore sensetive test data
-testdata/**/*.json
-testdata/**/*.yaml
-
-# Ignore VS Code folder
-.vscode
-
-# Ignore packaged helm charts
-*.tgz
+# ── Environment / secrets (never commit real credentials) ────────────────────
+.env
+*.env
+testdata/infoblox/config.json

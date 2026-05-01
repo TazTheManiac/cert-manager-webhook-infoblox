@@ -1,24 +1,35 @@
-FROM golang:1.23.3-alpine3.20 AS build_deps
+# ─── Stage 1: resolve dependencies ───────────────────────────────────────────
+FROM golang:1.24-alpine AS deps
 
-RUN apk add --no-cache git
+LABEL org.opencontainers.image.source="https://github.com/tazthemaniac/cert-manager-webhook-infoblox"
+
+RUN apk add --no-cache git ca-certificates
 
 WORKDIR /workspace
 
-COPY go.mod .
-COPY go.sum .
-
+COPY go.mod go.sum ./
 RUN go mod download
 
-FROM build_deps AS build
+# ─── Stage 2: build ───────────────────────────────────────────────────────────
+FROM deps AS build
 
 COPY . .
+RUN go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux go build \
+        -o /webhook \
+        -ldflags '-w -extldflags "-static"' \
+        .
 
-RUN CGO_ENABLED=0 go build -o webhook -ldflags '-w -extldflags "-static"' .
+# ─── Stage 3: minimal runtime image ──────────────────────────────────────────
+FROM scratch
 
-FROM alpine:3.20
+LABEL org.opencontainers.image.source="https://github.com/tazthemaniac/cert-manager-webhook-infoblox"
+LABEL org.opencontainers.image.description="cert-manager DNS01 webhook for Infoblox WAPI"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 
-RUN apk add --no-cache ca-certificates
+# Copy CA certificates so TLS connections to Infoblox work.
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
-COPY --from=build /workspace/webhook /usr/local/bin/webhook
+COPY --from=build /webhook /webhook
 
-ENTRYPOINT ["webhook"]
+ENTRYPOINT ["/webhook", "-v=4"]

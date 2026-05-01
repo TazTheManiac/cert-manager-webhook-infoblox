@@ -1,0 +1,25 @@
+cert-manager-webhook-infoblox has been deployed.
+
+Solver name : infoblox-wapi
+Group name  : {{ .Values.groupName }}
+
+To use this webhook in a ClusterIssuer, add the following stanza to your
+issuer's solver configuration:
+
+  solvers:
+    - dns01:
+        webhook:
+          groupName: {{ .Values.groupName }}
+          solverName: infoblox-wapi
+          config:
+            host: <infoblox-host>
+            view: <dns-view>
+            usernameSecretRef:
+              name: infoblox-credentials
+              key: username
+            passwordSecretRef:
+              name: infoblox-credentials
+              key: password
+
+For full documentation see:
+  https://github.com/taz/cert-manager-webhook-infoblox
