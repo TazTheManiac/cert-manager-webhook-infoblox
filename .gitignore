@@ -1,5 +1,6 @@
 # ── Binaries / build artefacts ────────────────────────────────────────────────
 /webhook
+/cert-manager-webhook-infoblox
 /_out/
 /bin/
 coverage.out
