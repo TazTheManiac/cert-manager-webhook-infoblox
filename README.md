@@ -28,7 +28,10 @@ kubectl create secret generic infoblox-credentials \
 ### 2. Install the Helm chart
 
 ```sh
-helm install cert-manager-webhook-infoblox ./charts/cert-manager-webhook-infoblox \
+helm repo add cert-manager-webhook-infoblox https://tazthemaniac.github.io/cert-manager-webhook-infoblox/
+helm repo update
+
+helm install cert-manager-webhook-infoblox cert-manager-webhook-infoblox/cert-manager-webhook-infoblox \
   --namespace cert-manager \
   --set groupName=acme.yourcompany.com
 ```
@@ -38,7 +41,7 @@ The `groupName` must be unique within your cluster and must match every Issuer/C
 By default the chart grants the webhook read access to a Secret named `infoblox-credentials` in the same namespace. If your Secret has a different name, override it at install time:
 
 ```sh
-helm install cert-manager-webhook-infoblox ./charts/cert-manager-webhook-infoblox \
+helm install cert-manager-webhook-infoblox cert-manager-webhook-infoblox/cert-manager-webhook-infoblox \
   --namespace cert-manager \
   --set groupName=acme.yourcompany.com \
   --set credentialsSecret.name=infoblox-credentials
