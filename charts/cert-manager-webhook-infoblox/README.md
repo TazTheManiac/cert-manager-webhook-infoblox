@@ -5,7 +5,7 @@ A [cert-manager](https://cert-manager.io) ACME DNS01 webhook solver for [Infoblo
 ## Requirements
 
 - Kubernetes 1.34+
-- cert-manager 1.19+
+- cert-manager 1.20+
 - Infoblox NIOS 8.x+ with WAPI v2.x enabled
 - Helm 3.x
 

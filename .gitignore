@@ -5,6 +5,7 @@
 /bin/
 coverage.out
 coverage.html
+trivy-report.json
 
 # ── Go toolchain ──────────────────────────────────────────────────────────────
 *.test

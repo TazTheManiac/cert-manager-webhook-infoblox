@@ -42,6 +42,20 @@ docker-push: ## Push the Docker image to the registry
 .PHONY: docker-build-push
 docker-build-push: docker-build docker-push ## Build and push the Docker image
 
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Security
+# ──────────────────────────────────────────────────────────────────────────────
+.PHONY: trivy-scan
+TRIVY_REPORT := trivy-report.json
+trivy-scan: ## Scan the Docker image with Trivy (table output by default; set TRIVY_OUTPUT=1 to save JSON to trivy-report.json)
+ifdef TRIVY_OUTPUT
+	trivy image --format json --output $(TRIVY_REPORT) "$(IMAGE_NAME):$(IMAGE_TAG)"
+	@echo "Trivy report written to $(TRIVY_REPORT)"
+else
+	trivy image --format table "$(IMAGE_NAME):$(IMAGE_TAG)"
+endif
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Testing
 # ──────────────────────────────────────────────────────────────────────────────
@@ -126,7 +140,7 @@ tidy: ## Run go mod tidy
 
 .PHONY: clean
 clean: ## Remove build artefacts
-	rm -rf $(BINARY) $(OUT) $(BIN_DIR) coverage.out coverage.html
+	rm -rf $(BINARY) $(OUT) $(BIN_DIR) coverage.out coverage.html $(TRIVY_REPORT)
 
 $(OUT) $(BIN_DIR):
 	mkdir -p $@
