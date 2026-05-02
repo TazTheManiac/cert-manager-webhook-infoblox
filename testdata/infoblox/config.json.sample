@@ -1,6 +1,6 @@
 {
   "host":    "infoblox.example.com",
-  "view":    "default",
+  "view":    "External",
   "usernameSecretRef": {
     "name": "infoblox-credentials",
     "key":  "username"

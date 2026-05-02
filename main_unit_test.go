@@ -122,7 +122,9 @@ func (m *mockIBConnector) UpdateObject(_ ibclient.IBObject, _ string) (string, e
 
 func TestName(t *testing.T) {
 	s := &infobloxDNSSolver{}
-	assert.Equal(t, "infoblox", s.Name())
+	got := s.Name()
+	t.Logf("solver name = %q", got)
+	assert.Equal(t, "infoblox", got)
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -144,7 +146,9 @@ func TestTrimTrailingDot(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
-			assert.Equal(t, tt.expected, trimTrailingDot(tt.input))
+			got := trimTrailingDot(tt.input)
+			t.Logf("trimTrailingDot(%q) = %q (want %q)", tt.input, got, tt.expected)
+			assert.Equal(t, tt.expected, got)
 		})
 	}
 }
@@ -154,9 +158,12 @@ func TestTrimTrailingDot(t *testing.T) {
 // ────────────────────────────────────────────────────────────────────────────
 
 func TestLoadConfig_Nil(t *testing.T) {
+	t.Log("loading config from nil — expecting all defaults to be applied")
 	cfg, err := loadConfig(nil)
 	require.NoError(t, err)
 	// All fields should receive defaults.
+	t.Logf("port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
+		cfg.Port, cfg.Version, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
 	assert.Equal(t, defaultPort, cfg.Port)
 	assert.Equal(t, defaultVersion, cfg.Version)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
@@ -165,9 +172,11 @@ func TestLoadConfig_Nil(t *testing.T) {
 }
 
 func TestLoadConfig_Empty(t *testing.T) {
+	t.Log("loading config from empty JSON object — expecting defaults to be applied")
 	raw := apiextensionsv1.JSON{Raw: []byte("{}")}
 	cfg, err := loadConfig(&raw)
 	require.NoError(t, err)
+	t.Logf("port=%s (default=%s)", cfg.Port, defaultPort)
 	assert.Equal(t, defaultPort, cfg.Port)
 }
 
@@ -184,8 +193,11 @@ func TestLoadConfig_Valid(t *testing.T) {
 		"useTtl":              true
 	}`
 	raw := apiextensionsv1.JSON{Raw: []byte(js)}
+	t.Log("loading config from fully-populated JSON")
 	cfg, err := loadConfig(&raw)
 	require.NoError(t, err)
+	t.Logf("host=%s port=%s version=%s view=%s sslVerify=%v httpRequestTimeout=%d httpPoolConnections=%d ttl=%d useTtl=%v",
+		cfg.Host, cfg.Port, cfg.Version, cfg.View, cfg.SslVerify, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL, cfg.UseTTL)
 
 	assert.Equal(t, "infoblox.example.com", cfg.Host)
 	assert.Equal(t, "8443", cfg.Port)
@@ -199,15 +211,20 @@ func TestLoadConfig_Valid(t *testing.T) {
 }
 
 func TestLoadConfig_InvalidJSON(t *testing.T) {
+	t.Log("loading config from invalid JSON — expecting a decode error")
 	raw := apiextensionsv1.JSON{Raw: []byte("not json")}
 	_, err := loadConfig(&raw)
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 	assert.Contains(t, err.Error(), "error decoding solver config")
 }
 
 func TestApplyDefaults_AllEmpty(t *testing.T) {
+	t.Log("applying defaults to zero-value config — all fields should be filled in")
 	cfg := infobloxConfig{}
 	applyDefaults(&cfg)
+	t.Logf("port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
+		cfg.Port, cfg.Version, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
 	assert.Equal(t, defaultPort, cfg.Port)
 	assert.Equal(t, defaultVersion, cfg.Version)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
@@ -223,7 +240,11 @@ func TestApplyDefaults_PreservesValues(t *testing.T) {
 		HTTPPoolConnections: 25,
 		TTL:                 900,
 	}
+	t.Logf("input: port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
+		cfg.Port, cfg.Version, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
 	applyDefaults(&cfg)
+	t.Logf("after applyDefaults: port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
+		cfg.Port, cfg.Version, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
 	assert.Equal(t, "8443", cfg.Port)
 	assert.Equal(t, "2.12", cfg.Version)
 	assert.Equal(t, 120, cfg.HTTPRequestTimeout)
@@ -233,7 +254,9 @@ func TestApplyDefaults_PreservesValues(t *testing.T) {
 
 func TestApplyDefaults_NegativeTimeoutGetsDefault(t *testing.T) {
 	cfg := infobloxConfig{HTTPRequestTimeout: -5}
+	t.Logf("input: httpRequestTimeout=%d (negative — should be replaced with default)", cfg.HTTPRequestTimeout)
 	applyDefaults(&cfg)
+	t.Logf("after applyDefaults: httpRequestTimeout=%d (default=%d)", cfg.HTTPRequestTimeout, defaultHTTPRequestTimeout)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
 }
 
@@ -259,29 +282,35 @@ func TestGetSecretValue_Success(t *testing.T) {
 
 	solver := &infobloxDNSSolver{kubeClient: fake.NewSimpleClientset(secret)}
 
+	t.Logf("looking up key %q from secret %q in namespace %q", "username", "my-secret", "test-ns")
 	user, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "my-secret"},
 		Key:                  "username",
 	}, "test-ns")
 	require.NoError(t, err)
+	t.Logf("username = %q", user)
 	assert.Equal(t, "admin", user)
 
+	t.Logf("looking up key %q — raw value has trailing newline, should be stripped", "password")
 	pass, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "my-secret"},
 		Key:                  "password",
 	}, "test-ns")
 	require.NoError(t, err)
+	t.Logf("password = %q (newline stripped)", pass)
 	assert.Equal(t, "s3cr3t", pass) // newline stripped
 }
 
 func TestGetSecretValue_SecretNotFound(t *testing.T) {
 	solver := &infobloxDNSSolver{kubeClient: fake.NewSimpleClientset()}
 
+	t.Logf("looking up key %q from non-existent secret %q — expecting error", "username", "missing")
 	_, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "missing"},
 		Key:                  "username",
 	}, "test-ns")
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 	assert.Contains(t, err.Error(), "cannot get secret")
 }
 
@@ -291,11 +320,13 @@ func TestGetSecretValue_KeyNotFound(t *testing.T) {
 	})
 	solver := &infobloxDNSSolver{kubeClient: fake.NewSimpleClientset(secret)}
 
+	t.Logf("looking up non-existent key %q from secret %q — expecting error", "nonexistent", "my-secret")
 	_, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "my-secret"},
 		Key:                  "nonexistent",
 	}, "test-ns")
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 	assert.Contains(t, err.Error(), "not found in secret")
 }
 
@@ -307,8 +338,10 @@ func TestResolveCredentials_NoConfig(t *testing.T) {
 	solver := &infobloxDNSSolver{}
 	cfg := &infobloxConfig{}
 
+	t.Log("resolving credentials with empty config — expecting 'no credentials configured' error")
 	_, _, err := solver.resolveCredentials(cfg, "test-ns")
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 	assert.Contains(t, err.Error(), "no credentials configured")
 }
 
@@ -330,8 +363,10 @@ func TestResolveCredentials_SecretRef(t *testing.T) {
 		},
 	}
 
+	t.Logf("resolving credentials from secret %q in namespace %q", "ib-creds", "test-ns")
 	user, pass, err := solver.resolveCredentials(cfg, "test-ns")
 	require.NoError(t, err)
+	t.Logf("username = %q  password = %q", user, "***")
 	assert.Equal(t, "secretuser", user)
 	assert.Equal(t, "secretpass", pass)
 }
@@ -343,8 +378,11 @@ func TestResolveCredentials_SecretRef(t *testing.T) {
 func TestGetTXTRecord_NotFound(t *testing.T) {
 	mock := newMockIBConnector()
 
-	ref, err := getTXTRecord(mock, "_acme-challenge.example.com", "tokenvalue", "default")
+	name, text, view := "_acme-challenge.example.com", "tokenvalue", "default"
+	t.Logf("querying TXT record name=%q text=%q view=%q — expecting not found", name, text, view)
+	ref, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("ref = %q (empty = not found)", ref)
 	assert.Empty(t, ref)
 }
 
@@ -355,12 +393,16 @@ func TestCreateAndGetTXTRecord(t *testing.T) {
 	text := "challengetoken"
 	view := "default"
 
+	t.Logf("creating TXT record name=%q text=%q view=%q ttl=300 useTtl=true", name, text, view)
 	ref, err := createTXTRecord(mock, name, text, view, 300, true)
 	require.NoError(t, err)
+	t.Logf("created ref = %q", ref)
 	assert.NotEmpty(t, ref)
 
+	t.Logf("querying TXT record to confirm it exists")
 	found, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("found ref = %q", found)
 	assert.Equal(t, ref, found)
 }
 
@@ -371,30 +413,40 @@ func TestDeleteTXTRecord_Success(t *testing.T) {
 	text := "tokenvalue"
 	view := "default"
 
+	t.Logf("creating TXT record name=%q text=%q view=%q", name, text, view)
 	ref, err := createTXTRecord(mock, name, text, view, 300, true)
 	require.NoError(t, err)
+	t.Logf("created ref = %q", ref)
 
+	t.Logf("deleting TXT record ref=%q", ref)
 	err = deleteTXTRecord(mock, ref)
 	require.NoError(t, err)
+	t.Log("delete succeeded — verifying record is gone")
 
 	// Record should no longer exist.
 	found, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("post-delete lookup ref = %q (empty = confirmed deleted)", found)
 	assert.Empty(t, found)
 }
 
 func TestDeleteTXTRecord_RefNotFound(t *testing.T) {
 	mock := newMockIBConnector()
-	err := deleteTXTRecord(mock, "record:txt/nonexistent")
+	ref := "record:txt/nonexistent"
+	t.Logf("attempting to delete non-existent ref=%q — expecting error", ref)
+	err := deleteTXTRecord(mock, ref)
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 }
 
 func TestCreateTXTRecord_Error(t *testing.T) {
 	mock := newMockIBConnector()
 	mock.createErr = ibclient.NewNotFoundError("forced error")
 
+	t.Log("createErr injected into mock — CreateObject should fail")
 	_, err := createTXTRecord(mock, "example.com", "val", "default", 300, true)
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 	assert.Contains(t, err.Error(), "CreateObject failed")
 }
 
@@ -402,8 +454,10 @@ func TestGetTXTRecord_Error(t *testing.T) {
 	mock := newMockIBConnector()
 	mock.getErr = assert.AnError // not a NotFoundError, so should propagate
 
+	t.Log("getErr injected into mock — non-NotFound error should propagate as GetObject failed")
 	_, err := getTXTRecord(mock, "example.com", "val", "default")
 	require.Error(t, err)
+	t.Logf("error received: %v", err)
 	assert.Contains(t, err.Error(), "GetObject failed")
 }
 
@@ -427,25 +481,33 @@ func TestPresent_EndToEnd_UsingLowLevelFunctions(t *testing.T) {
 
 	// Simulate what Present() does with the mock:
 	// 1. Check no existing record.
+	t.Logf("step 1: querying for existing TXT record name=%q text=%q view=%q", name, text, view)
 	ref, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("step 1: ref = %q (empty = no existing record)", ref)
 	assert.Empty(t, ref)
 
 	// 2. Create record.
+	t.Logf("step 2: creating TXT record name=%q text=%q view=%q ttl=300", name, text, view)
 	ref, err = createTXTRecord(mock, name, text, view, 300, true)
 	require.NoError(t, err)
+	t.Logf("step 2: created ref = %q", ref)
 	assert.NotEmpty(t, ref)
 
 	// 3. Re-calling Present would delete the existing record first.
+	t.Log("step 3: simulating re-present — looking up existing record")
 	existingRef, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("step 3: existing ref = %q — deleting before re-create", existingRef)
 	assert.Equal(t, ref, existingRef)
 
 	err = deleteTXTRecord(mock, existingRef)
 	require.NoError(t, err)
 
+	t.Log("step 4: re-creating TXT record after delete")
 	newRef, err := createTXTRecord(mock, name, text, view, 300, true)
 	require.NoError(t, err)
+	t.Logf("step 4: new ref = %q", newRef)
 	assert.NotEmpty(t, newRef)
 }
 
@@ -456,30 +518,40 @@ func TestCleanUp_EndToEnd_UsingLowLevelFunctions(t *testing.T) {
 	text := "acme-token-cleanup"
 	view := "default"
 
+	t.Logf("setup: creating TXT record name=%q text=%q view=%q", name, text, view)
 	ref, err := createTXTRecord(mock, name, text, view, 300, true)
 	require.NoError(t, err)
+	t.Logf("setup: created ref = %q", ref)
 	assert.NotEmpty(t, ref)
 
 	// Simulate CleanUp:
+	t.Log("step 1: querying for TXT record to obtain ref for deletion")
 	found, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("step 1: found ref = %q", found)
 	assert.NotEmpty(t, found)
 
+	t.Logf("step 2: deleting TXT record ref=%q", found)
 	err = deleteTXTRecord(mock, found)
 	require.NoError(t, err)
+	t.Log("step 2: delete succeeded")
 
 	// Record should be gone.
+	t.Log("step 3: verifying record no longer exists")
 	gone, err := getTXTRecord(mock, name, text, view)
 	require.NoError(t, err)
+	t.Logf("step 3: ref = %q (empty = confirmed deleted)", gone)
 	assert.Empty(t, gone)
 }
 
 func TestCleanUp_RecordAlreadyGone(t *testing.T) {
 	mock := newMockIBConnector()
 
+	t.Log("simulating CleanUp when no record exists — lookup should return empty, no delete attempted")
 	// Simulate CleanUp when no record exists (should be a no-op).
 	found, err := getTXTRecord(mock, "_acme-challenge.example.com", "token", "default")
 	require.NoError(t, err)
+	t.Logf("lookup ref = %q (empty = no record to delete, no-op confirmed)", found)
 	assert.Empty(t, found)
 	// Nothing to delete → no error expected.
 }

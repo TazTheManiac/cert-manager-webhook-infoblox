@@ -119,8 +119,14 @@ make test
 
 Integration tests require a real Infoblox server and a configured `testdata/infoblox/config.json` (see `testdata/infoblox/config.json.sample`).
 
+Before running, ensure:
+
+- `testdata/infoblox/config.json` exists and contains valid connection details for your Infoblox GRID
+- The `view` field in `config.json` is set to the DNS view that is **externally reachable** — i.e. the view that serves the zone you are testing against. ACME DNS01 challenges are verified from the public internet, so using an internal-only view will cause the conformance suite to fail
+- A `testdata/infoblox/credentials.yaml` Secret manifest exists (see `credentials.yaml.sample`), with the Secret deployed to the namespace the webhook runs in
+
 ```sh
-TEST_ZONE_NAME=example.com make test-integration
+TEST_ZONE_NAME=example.com. make test-integration
 ```
 
 ### Lint
