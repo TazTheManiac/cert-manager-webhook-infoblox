@@ -123,7 +123,7 @@ Before running, ensure:
 
 - `testdata/infoblox/config.json` exists and contains valid connection details for your Infoblox GRID
 - The `view` field in `config.json` is set to the DNS view that is **externally reachable**, i.e. the view that serves the zone you are testing against. ACME DNS01 challenges are verified from the public internet, so using an internal-only view will cause the conformance suite to fail
-- A `testdata/infoblox/credentials.yaml` Secret manifest exists (see `credentials.yaml.sample`), the test framework applies it automatically to the test namespace
+- A `testdata/infoblox/credentials.yaml` Secret manifest exists (see `credentials.yaml.sample`); the test framework applies it automatically to the test namespace
 
 ```sh
 TEST_ZONE_NAME=example.com. make test-integration
@@ -155,7 +155,7 @@ make docker-build-push IMAGE_TAG=2.0.0
 .
 ├── main.go                               # Webhook solver implementation
 ├── main_test.go                          # Conformance integration test (build tag: integration)
-├── main_unit_test.go                     # Unit tests (mock Infoblox connector)
+├── main_unit_test.go                     # Unit tests
 ├── go.mod
 ├── go.sum
 ├── Makefile

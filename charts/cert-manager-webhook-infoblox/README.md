@@ -66,7 +66,7 @@ spec:
             solverName: infoblox
             config:
               host: infoblox.yourcompany.com
-              view: default
+              view: External
               usernameSecretRef:
                 name: infoblox-credentials
                 key: username
@@ -79,13 +79,13 @@ spec:
 
 | Parameter                        | Default                                      | Description                                                                  |
 | -------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------- |
-| `groupName`                      | `""`                                         | **Required.** Unique group name for this webhook — use your company's domain |
+| `groupName`                      | `""`                                         | **Required.** Unique group name for this webhook (use your company's domain) |
 | `credentialsSecret.name`         | `infoblox-credentials`                       | Name of the Secret containing the Infoblox credentials                       |
 | `certManager.namespace`          | `cert-manager`                               | Namespace where cert-manager is installed                                    |
 | `certManager.serviceAccountName` | `cert-manager`                               | cert-manager's ServiceAccount name                                           |
 | `replicaCount`                   | `1`                                          | Number of webhook pod replicas                                               |
 | `image.repository`               | `tazthemaniac/cert-manager-webhook-infoblox` | Container image repository                                                   |
-| `image.tag`                      | `""`                                         | Container image tag — defaults to the chart appVersion                       |
+| `image.tag`                      | `""`                                         | Container image tag, defaults to the chart appVersion                        |
 | `image.pullPolicy`               | `IfNotPresent`                               | Image pull policy                                                            |
 | `imagePullSecrets`               | `[]`                                         | Image pull secrets for private registries                                    |
 | `rootCACertificate.duration`     | `43800h`                                     | Duration of the self-signed root CA certificate (5 years)                    |
@@ -105,7 +105,7 @@ spec:
 
 | Field                 | Default | Description                                               |
 | --------------------- | ------- | --------------------------------------------------------- |
-| `host`                | —       | **Required.** Infoblox GRID member FQDN or IP             |
+| `host`                | -       | **Required.** Infoblox GRID member FQDN or IP             |
 | `port`                | `443`   | WAPI HTTPS port                                           |
 | `version`             | `2.10`  | WAPI version                                              |
 | `view`                | `""`    | DNS view containing the zone                              |
@@ -114,5 +114,5 @@ spec:
 | `httpPoolConnections` | `10`    | Max idle connections to Infoblox                          |
 | `ttl`                 | `300`   | TTL set on created TXT records                            |
 | `useTtl`              | `false` | Whether to set the TTL field on TXT records               |
-| `usernameSecretRef`   | —       | Reference to the Secret key holding the Infoblox username |
-| `passwordSecretRef`   | —       | Reference to the Secret key holding the Infoblox password |
+| `usernameSecretRef`   | -       | Reference to the Secret key holding the Infoblox username |
+| `passwordSecretRef`   | -       | Reference to the Secret key holding the Infoblox password |

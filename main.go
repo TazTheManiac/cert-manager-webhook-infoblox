@@ -5,8 +5,7 @@
 // official infoblox-go-client library (WAPI v2).
 //
 // Configuration is provided via the ClusterIssuer/Issuer webhook config stanza.
-// Credentials can be supplied either as a Kubernetes Secret reference or as a
-// JSON file mounted into the pod.
+// Credentials are supplied as Kubernetes Secret references in the config.
 package main
 
 import (

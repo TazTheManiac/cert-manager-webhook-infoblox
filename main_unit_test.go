@@ -55,7 +55,7 @@ func TestTrimTrailingDot(t *testing.T) {
 // ────────────────────────────────────────────────────────────────────────────
 
 func TestLoadConfig_Nil(t *testing.T) {
-	t.Log("loading config from nil — expecting all defaults to be applied")
+	t.Log("loading config from nil, expecting all defaults to be applied")
 	cfg, err := loadConfig(nil)
 	require.NoError(t, err)
 	t.Logf("port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
@@ -68,7 +68,7 @@ func TestLoadConfig_Nil(t *testing.T) {
 }
 
 func TestLoadConfig_Empty(t *testing.T) {
-	t.Log("loading config from empty JSON object — expecting defaults to be applied")
+	t.Log("loading config from empty JSON object, expecting defaults to be applied")
 	raw := apiextensionsv1.JSON{Raw: []byte("{}")}
 	cfg, err := loadConfig(&raw)
 	require.NoError(t, err)
@@ -107,7 +107,7 @@ func TestLoadConfig_Valid(t *testing.T) {
 }
 
 func TestLoadConfig_InvalidJSON(t *testing.T) {
-	t.Log("loading config from invalid JSON — expecting a decode error")
+	t.Log("loading config from invalid JSON, expecting a decode error")
 	raw := apiextensionsv1.JSON{Raw: []byte("not json")}
 	_, err := loadConfig(&raw)
 	require.Error(t, err)
@@ -116,7 +116,7 @@ func TestLoadConfig_InvalidJSON(t *testing.T) {
 }
 
 func TestApplyDefaults_AllEmpty(t *testing.T) {
-	t.Log("applying defaults to zero-value config — all fields should be filled in")
+	t.Log("applying defaults to zero-value config, all fields should be filled in")
 	cfg := infobloxConfig{}
 	applyDefaults(&cfg)
 	t.Logf("port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
@@ -150,7 +150,7 @@ func TestApplyDefaults_PreservesValues(t *testing.T) {
 
 func TestApplyDefaults_NegativeTimeoutGetsDefault(t *testing.T) {
 	cfg := infobloxConfig{HTTPRequestTimeout: -5}
-	t.Logf("input: httpRequestTimeout=%d (negative — should be replaced with default)", cfg.HTTPRequestTimeout)
+	t.Logf("input: httpRequestTimeout=%d (negative, should be replaced with default)", cfg.HTTPRequestTimeout)
 	applyDefaults(&cfg)
 	t.Logf("after applyDefaults: httpRequestTimeout=%d (default=%d)", cfg.HTTPRequestTimeout, defaultHTTPRequestTimeout)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
@@ -187,7 +187,7 @@ func TestGetSecretValue_Success(t *testing.T) {
 	t.Logf("username = %q", user)
 	assert.Equal(t, "admin", user)
 
-	t.Logf("looking up key %q — raw value has trailing newline, should be stripped", "password")
+	t.Logf("looking up key %q, raw value has trailing newline, should be stripped", "password")
 	pass, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "my-secret"},
 		Key:                  "password",
@@ -200,7 +200,7 @@ func TestGetSecretValue_Success(t *testing.T) {
 func TestGetSecretValue_SecretNotFound(t *testing.T) {
 	solver := &infobloxDNSSolver{kubeClient: fake.NewSimpleClientset()}
 
-	t.Logf("looking up key %q from non-existent secret %q — expecting error", "username", "missing")
+	t.Logf("looking up key %q from non-existent secret %q, expecting error", "username", "missing")
 	_, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "missing"},
 		Key:                  "username",
@@ -216,7 +216,7 @@ func TestGetSecretValue_KeyNotFound(t *testing.T) {
 	})
 	solver := &infobloxDNSSolver{kubeClient: fake.NewSimpleClientset(secret)}
 
-	t.Logf("looking up non-existent key %q from secret %q — expecting error", "nonexistent", "my-secret")
+	t.Logf("looking up non-existent key %q from secret %q, expecting error", "nonexistent", "my-secret")
 	_, err := solver.getSecretValue(cmmeta.SecretKeySelector{
 		LocalObjectReference: cmmeta.LocalObjectReference{Name: "my-secret"},
 		Key:                  "nonexistent",
@@ -234,7 +234,7 @@ func TestResolveCredentials_NoConfig(t *testing.T) {
 	solver := &infobloxDNSSolver{}
 	cfg := &infobloxConfig{}
 
-	t.Log("resolving credentials with empty config — expecting 'no credentials configured' error")
+	t.Log("resolving credentials with empty config, expecting 'no credentials configured' error")
 	_, _, err := solver.resolveCredentials(cfg, "test-ns")
 	require.Error(t, err)
 	t.Logf("error received: %v", err)
