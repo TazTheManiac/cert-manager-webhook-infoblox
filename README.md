@@ -87,17 +87,17 @@ spec:
 
 All fields are optional unless marked required.
 
-| Field                 | Type              | Default  | Description                                                |
-| --------------------- | ----------------- | -------- | ---------------------------------------------------------- |
-| `host`                | string            | -        | **Required.** Infoblox GRID member FQDN or IP              |
-| `port`                | string            | `"443"`  | WAPI HTTPS port                                            |
-| `version`             | string            | `"2.10"` | WAPI version (e.g. `"2.11"`)                               |
-| `view`                | string            | `""`     | DNS view containing the zone                               |
-| `sslVerify`           | bool              | `true`   | Enable TLS certificate verification                        |
-| `httpRequestTimeout`  | int               | `60`     | Per-request timeout in seconds                             |
-| `httpPoolConnections` | int               | `10`     | Max idle connections to Infoblox                           |
-| `ttl`                 | uint32            | `300`    | TTL set on created TXT records                             |
-| `useTtl`              | bool              | `false`  | Whether to set the TTL field on TXT records                |
+| Field                 | Type              | Default  | Description                                                              |
+| --------------------- | ----------------- | -------- | ------------------------------------------------------------------------ |
+| `host`                | string            | -        | **Required.** Infoblox GRID member FQDN or IP                            |
+| `port`                | string            | `"443"`  | WAPI HTTPS port                                                          |
+| `version`             | string            | `"2.10"` | WAPI version (e.g. `"2.11"`)                                             |
+| `view`                | string            | `""`     | DNS view containing the zone                                             |
+| `sslVerify`           | bool              | `true`   | Enable TLS certificate verification                                      |
+| `httpRequestTimeout`  | int               | `60`     | Per-request timeout in seconds                                           |
+| `httpPoolConnections` | int               | `10`     | Max idle connections to Infoblox                                         |
+| `ttl`                 | uint32            | `300`    | TTL set on created TXT records                                           |
+| `useTtl`              | bool              | `false`  | Whether to set the TTL field on TXT records                              |
 | `usernameSecretRef`   | SecretKeySelector | -        | **Required.** Reference to a Secret key containing the Infoblox username |
 | `passwordSecretRef`   | SecretKeySelector | -        | **Required.** Reference to a Secret key containing the Infoblox password |
 

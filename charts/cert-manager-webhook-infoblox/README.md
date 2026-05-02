@@ -81,7 +81,7 @@ spec:
 | Parameter                          | Default                                      | Description                                                                          |
 | ---------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `groupName`                        | `""`                                         | **Required.** Unique group name for this webhook (use your company's domain)         |
-| `credentialsSecret.name`         | `infoblox-credentials`                       | Name of the Secret containing the Infoblox credentials                       |
+| `credentialsSecret.name`           | `infoblox-credentials`                       | Name of the Secret containing the Infoblox credentials                               |
 | `certManager.namespace`            | `cert-manager`                               | Namespace where cert-manager is installed                                            |
 | `certManager.serviceAccountName`   | `cert-manager`                               | cert-manager's ServiceAccount name                                                   |
 | `replicaCount`                     | `1`                                          | Number of webhook pod replicas                                                       |
@@ -116,8 +116,8 @@ spec:
 | `httpPoolConnections` | `10`     | Max idle connections to Infoblox                                        |
 | `ttl`                 | `300`    | TTL set on created TXT records                                          |
 | `useTtl`              | `false`  | Whether to set the TTL field on TXT records                             |
-| `usernameSecretRef`   | -       | **Required.** Reference to the Secret key holding the Infoblox username |
-| `passwordSecretRef`   | -       | **Required.** Reference to the Secret key holding the Infoblox password |
+| `usernameSecretRef`   | -        | **Required.** Reference to the Secret key holding the Infoblox username |
+| `passwordSecretRef`   | -        | **Required.** Reference to the Secret key holding the Infoblox password |
 
 ## Upgrading from 1.x
 
@@ -128,6 +128,6 @@ spec:
 | `scheme` config field removed                                             | Remove `scheme` from your Issuer/ClusterIssuer `config` block. HTTPS is always used. For self-signed or private CA certificates set `sslVerify: false` instead. |
 | `version` default changed from `2.13.5` to `2.10`                         | Explicitly set `version` in your Issuer config if you depend on a specific WAPI version.                                                                        |
 | RBAC created automatically by the chart                                   | Delete any manually-managed `webhook-infoblox:secret-reader` Role and RoleBinding, the chart now manages them.                                                  |
-| New `credentialsSecret.name` Helm value (default: `infoblox-credentials`) | Set `--set credentialsSecret.name=<name>` at upgrade time if your credentials Secret has a different name. |
+| New `credentialsSecret.name` Helm value (default: `infoblox-credentials`) | Set `--set credentialsSecret.name=<name>` at upgrade time if your credentials Secret has a different name.                                                      |
 | `groupName` is now schema-validated as non-empty                          | Always was required; `helm upgrade` will now fail explicitly if it is not set.                                                                                  |
-| Runtime changed to `distroless/static-debian12:nonroot` (UID 65532)       | Update any PodSecurityPolicy, OPA, or Kyverno rules that pinned UID `65534`.                                                                                    |
+| Runtime changed to `distroless/static-debian12:nonroot` (UID 65532)       | Update any policy/rule that pinned UID `65534`.                                                                                                                 |
