@@ -77,10 +77,14 @@ test-coverage: setup-envtest ## Run unit tests with coverage report
 	$(GO) tool cover -html=coverage.out -o coverage.html
 
 .PHONY: test-integration
-test-integration: ## Run the conformance test suite against a real Infoblox GRID
+test-integration: setup-envtest ## Run the conformance test suite against a real Infoblox GRID
 	@if [ -z "$$TEST_ZONE_NAME" ]; then \
 		echo "ERROR: TEST_ZONE_NAME must be set (e.g. example.com.)"; exit 1; \
 	fi
+	@ASSETS="$$($(SETUP_ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" && \
+	TEST_ASSET_ETCD="$$ASSETS/etcd" \
+	TEST_ASSET_KUBE_APISERVER="$$ASSETS/kube-apiserver" \
+	TEST_ASSET_KUBECTL="$$ASSETS/kubectl" \
 	$(GO) test -v -tags integration -timeout 5m .
 
 # ──────────────────────────────────────────────────────────────────────────────
