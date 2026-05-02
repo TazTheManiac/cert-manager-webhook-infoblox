@@ -1,5 +1,11 @@
 # cert-manager-webhook-infoblox
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/cert-manager-webhook-infoblox)](https://artifacthub.io/packages/search?repo=cert-manager-webhook-infoblox)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tazthemaniac/cert-manager-webhook-infoblox)](https://hub.docker.com/r/tazthemaniac/cert-manager-webhook-infoblox)
+[![Docker Hub](https://img.shields.io/docker/v/tazthemaniac/cert-manager-webhook-infoblox?sort=semver&label=docker%20hub)](https://hub.docker.com/r/tazthemaniac/cert-manager-webhook-infoblox)
+[![Docker](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/docker.yml/badge.svg)](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/docker.yml)
+[![Helm](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/helm.yml/badge.svg)](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/helm.yml)
+
 Forked from the [cert-manager/webhook-example](https://github.com/cert-manager/webhook-example) repository.  
 Heavily inspired from the work done by [Luis Gracia](https://github.com/luisico) on their now archived  [cert-manager-webhook-infoblox-wapi](https://github.com/luisico/cert-manager-webhook-infoblox-wapi) project.
 
@@ -16,7 +22,7 @@ A [cert-manager](https://cert-manager.io) ACME DNS01 webhook solver for [Infoblo
 
 ### 1. Create credentials
 
-Create a Kubernetes Secret containing the Infoblox username and password **before** installing the chart:
+Create a Kubernetes secret containing the Infoblox username and password **before** installing the chart:
 
 ```sh
 kubectl create secret generic infoblox-credentials \
@@ -38,7 +44,7 @@ helm install cert-manager-webhook-infoblox cert-manager-webhook-infoblox/cert-ma
 
 The `groupName` must be unique within your cluster and must match every Issuer/ClusterIssuer that references this solver.
 
-By default the chart grants the webhook read access to a Secret named `infoblox-credentials` in the same namespace. If your Secret has a different name, override it at install time:
+By default the chart grants the webhook read access to a secret named `infoblox-credentials` in the same namespace. If your Secret has a different name, override it at install time:
 
 ```sh
 helm install cert-manager-webhook-infoblox cert-manager-webhook-infoblox/cert-manager-webhook-infoblox \
@@ -59,7 +65,7 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: you@yourcompany.com
     privateKeySecretRef:
-      name: letsencrypt-prod-key
+      name: letsencrypt-prod-key   # cert-manager stores the ACME account key here, created automatically
     solvers:
       - dns01:
           webhook:
