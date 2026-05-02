@@ -22,13 +22,20 @@ import (
 	"testing"
 
 	acmetest "github.com/cert-manager/cert-manager/test/acme"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 var testZone = os.Getenv("TEST_ZONE_NAME")
 
+func TestMain(m *testing.M) {
+	logf.SetLogger(zap.New(zap.UseDevMode(true)))
+	os.Exit(m.Run())
+}
+
 func TestRunsSuite(t *testing.T) {
 	if testZone == "" {
-		t.Skip("TEST_ZONE_NAME not set – skipping conformance test")
+		t.Skip("TEST_ZONE_NAME not set - skipping conformance test")
 	}
 
 	fixture := acmetest.NewFixture(
