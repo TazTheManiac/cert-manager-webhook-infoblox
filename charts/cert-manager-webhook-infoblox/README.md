@@ -58,7 +58,7 @@ spec:
     email: you@yourcompany.com
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      name: letsencrypt-account-key
+      name: letsencrypt-prod-key   # cert-manager stores the ACME account key here. Created automatically, but must be unique per issuer
     solvers:
       - dns01:
           webhook:
@@ -100,6 +100,7 @@ spec:
 | `affinity`                       | `{}`                                         | Affinity rules for the webhook pod                                           |
 | `topologySpreadConstraints`      | `[]`                                         | Topology spread constraints for the webhook pod                              |
 | `podDisruptionBudget.enabled`    | `false`                                      | Enable a PodDisruptionBudget for the webhook                                 |
+| `podDisruptionBudget.minAvailable` | -                                          | Minimum pods that must remain available; integer or percentage (e.g. `1` or `"50%"`) |
 
 ## Issuer `config` reference
 

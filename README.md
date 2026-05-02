@@ -65,7 +65,7 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: you@yourcompany.com
     privateKeySecretRef:
-      name: letsencrypt-prod-key   # cert-manager stores the ACME account key here; created automatically, must be unique per issuer
+      name: letsencrypt-prod-key   # cert-manager stores the ACME account key here. Created automatically, but must be unique per issuer
     solvers:
       - dns01:
           webhook:
@@ -168,6 +168,7 @@ make docker-build-push IMAGE_TAG=2.0.0
 ├── Dockerfile
 ├── charts/
 │   └── cert-manager-webhook-infoblox/    # Helm chart
+│       └── values.schema.json            # JSON Schema for values validation
 └── testdata/
     └── infoblox/
         ├── config.json.sample            # Webhook config template
