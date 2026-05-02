@@ -82,7 +82,7 @@ All fields are optional unless marked required.
 
 | Field                 | Type              | Default  | Description                                                |
 | --------------------- | ----------------- | -------- | ---------------------------------------------------------- |
-| `host`                | string            | —        | **Required.** Infoblox GRID member FQDN or IP              |
+| `host`                | string            | -        | **Required.** Infoblox GRID member FQDN or IP              |
 | `port`                | string            | `"443"`  | WAPI HTTPS port                                            |
 | `version`             | string            | `"2.10"` | WAPI version (e.g. `"2.11"`)                               |
 | `view`                | string            | `""`     | DNS view containing the zone                               |
@@ -91,8 +91,8 @@ All fields are optional unless marked required.
 | `httpPoolConnections` | int               | `10`     | Max idle connections to Infoblox                           |
 | `ttl`                 | uint32            | `300`    | TTL set on created TXT records                             |
 | `useTtl`              | bool              | `false`  | Whether to set the TTL field on TXT records                |
-| `usernameSecretRef`   | SecretKeySelector | —        | Reference to a Secret key containing the Infoblox username |
-| `passwordSecretRef`   | SecretKeySelector | —        | Reference to a Secret key containing the Infoblox password |
+| `usernameSecretRef`   | SecretKeySelector | -        | Reference to a Secret key containing the Infoblox username |
+| `passwordSecretRef`   | SecretKeySelector | -        | Reference to a Secret key containing the Infoblox password |
 
 ## Development
 
@@ -122,8 +122,8 @@ Integration tests require a real Infoblox server and a configured `testdata/info
 Before running, ensure:
 
 - `testdata/infoblox/config.json` exists and contains valid connection details for your Infoblox GRID
-- The `view` field in `config.json` is set to the DNS view that is **externally reachable** — i.e. the view that serves the zone you are testing against. ACME DNS01 challenges are verified from the public internet, so using an internal-only view will cause the conformance suite to fail
-- A `testdata/infoblox/credentials.yaml` Secret manifest exists (see `credentials.yaml.sample`), with the Secret deployed to the namespace the webhook runs in
+- The `view` field in `config.json` is set to the DNS view that is **externally reachable**, i.e. the view that serves the zone you are testing against. ACME DNS01 challenges are verified from the public internet, so using an internal-only view will cause the conformance suite to fail
+- A `testdata/infoblox/credentials.yaml` Secret manifest exists (see `credentials.yaml.sample`), the test framework applies it automatically to the test namespace
 
 ```sh
 TEST_ZONE_NAME=example.com. make test-integration
