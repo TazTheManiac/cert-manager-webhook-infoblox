@@ -170,6 +170,10 @@ make docker-build-push IMAGE_TAG=2.0.0
 ├── charts/
 │   └── cert-manager-webhook-infoblox/    # Helm chart
 │       └── values.schema.json            # JSON Schema for values validation
+├── kind/                                 # Scripts for loading and installing the webhook into a local kind cluster
+│   ├── README.md                         # Step-by-step guide for kind-based local testing
+│   ├── setup.sh                          # Builds the image, loads it into kind, installs the Helm chart
+│   └── teardown.sh                       # Uninstalls the Helm release
 └── testdata/
     └── infoblox/
         ├── config.json.sample            # Webhook config template

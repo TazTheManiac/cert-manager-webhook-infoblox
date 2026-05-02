@@ -3,8 +3,13 @@ OS      ?= $(shell $(GO) env GOOS)
 ARCH    ?= $(shell $(GO) env GOARCH)
 
 IMAGE_NAME := tazthemaniac/cert-manager-webhook-infoblox
-IMAGE_TAG  ?= $(shell grep '^appVersion:' charts/cert-manager-webhook-infoblox/Chart.yaml 2>/dev/null | awk '{print $$2}' || echo "dev")
+IMAGE_TAG  ?= $(shell grep '^appVersion:' charts/cert-manager-webhook-infoblox/Chart.yaml 2>/dev/null | awk '{print $$2}' | tr -d '"' || echo "dev")
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null | sed 's/[\/_]/-/g' || echo "local")
+
+# kind
+KIND_CLUSTER ?=
+NAMESPACE    ?= cert-manager
+GROUP_NAME   ?= acme.example.com
 
 BINARY   := webhook
 OUT      := $(shell pwd)/_out
@@ -130,6 +135,17 @@ helm-template: | $(OUT) ## Render Helm templates (dry-run)
 		--set image.tag=$(IMAGE_TAG) \
 		charts/cert-manager-webhook-infoblox > $(OUT)/rendered-manifest.yaml
 	@echo "Rendered manifest written to $(OUT)/rendered-manifest.yaml"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# kind
+# ──────────────────────────────────────────────────────────────────────────────
+.PHONY: kind-setup
+kind-setup: ## Build, load into kind and install the webhook (KIND_CLUSTER required; NAMESPACE, GROUP_NAME optional)
+	KIND_CLUSTER=$(KIND_CLUSTER) NAMESPACE=$(NAMESPACE) GROUP_NAME=$(GROUP_NAME) bash kind/setup.sh
+
+.PHONY: kind-teardown
+kind-teardown: ## Uninstall the webhook Helm release from the kind cluster (NAMESPACE optional)
+	NAMESPACE=$(NAMESPACE) bash kind/teardown.sh
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Housekeeping
