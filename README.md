@@ -65,7 +65,7 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: you@yourcompany.com
     privateKeySecretRef:
-      name: letsencrypt-prod-key   # cert-manager stores the ACME account key here, created automatically
+      name: letsencrypt-prod-key   # cert-manager stores the ACME account key here; created automatically, must be unique per issuer
     solvers:
       - dns01:
           webhook:
