@@ -137,10 +137,10 @@ make docker-build
 make docker-push
 ```
 
-The image is published to `tazthemaniac/cert-manager-webhook-infoblox` on Docker Hub. Override the tag with `IMAGE_TAG=`:
+The image is published to `tazthemaniac/cert-manager-webhook-infoblox` on Docker Hub. The tag is automatically derived from `appVersion` in `charts/cert-manager-webhook-infoblox/Chart.yaml`. To override it:
 
 ```sh
-make docker-build-push IMAGE_TAG=1.2.3
+make docker-build-push IMAGE_TAG=2.0.0
 ```
 
 ## Project structure
@@ -148,9 +148,10 @@ make docker-build-push IMAGE_TAG=1.2.3
 ```
 .
 ├── main.go                               # Webhook solver implementation
-├── main_unit_test.go                     # Unit tests (mock Infoblox connector)
 ├── main_test.go                          # Conformance integration test (build tag: integration)
-├── go.mod / go.sum
+├── main_unit_test.go                     # Unit tests (mock Infoblox connector)
+├── go.mod
+├── go.sum
 ├── Makefile
 ├── Dockerfile
 ├── charts/
