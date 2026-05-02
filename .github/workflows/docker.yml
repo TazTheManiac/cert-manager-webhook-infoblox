@@ -1,4 +1,4 @@
-name: Release
+name: Docker
 
 on:
   push:
@@ -7,10 +7,12 @@ on:
 
 jobs:
   docker:
-    name: Build and push Docker image
+    name: Build, scan, and push Docker image
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      security-events: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -31,36 +33,30 @@ jobs:
         run: |
           echo "tag=$(grep '^appVersion:' charts/cert-manager-webhook-infoblox/Chart.yaml | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push
+      - name: Build image
         uses: docker/build-push-action@v7.1.0
         with:
           context: .
-          push: true
+          push: false
+          load: true
           tags: |
             tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
             tazthemaniac/cert-manager-webhook-infoblox:latest
 
-  helm:
-    name: Release Helm chart
-    runs-on: ubuntu-latest
-    needs: docker
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6.0.2
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.32.0
         with:
-          fetch-depth: 0
+          image-ref: tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
+          format: sarif
+          output: trivy-results.sarif
 
-      - name: Configure Git
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Push image
         run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v5.0.0
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.7.0
-        env:
-          CR_TOKEN: ${{ secrets.HELM_RELEASE_TOKEN }}
+          docker push tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
+          docker push tazthemaniac/cert-manager-webhook-infoblox:latest
