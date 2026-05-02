@@ -38,5 +38,7 @@ func TestRunsSuite(t *testing.T) {
 		acmetest.SetManifestPath("testdata/infoblox"),
 	)
 
-	fixture.RunConformance(t)
+	//fixture.RunConformance(t)
+	fixture.RunBasic(t)
+	fixture.RunExtended(t)
 }
