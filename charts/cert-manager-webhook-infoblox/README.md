@@ -67,6 +67,7 @@ spec:
             config:
               host: infoblox.yourcompany.com
               view: External
+              # sslVerify: false   # set to false if Infoblox uses a self-signed or private CA certificate
               usernameSecretRef:
                 name: infoblox-credentials
                 key: username
@@ -107,13 +108,13 @@ spec:
 | Field                 | Default | Description                                               |
 | --------------------- | ------- | --------------------------------------------------------- |
 | `host`                | -       | **Required.** Infoblox GRID member FQDN or IP             |
-| `port`                | `443`   | WAPI HTTPS port                                           |
-| `version`             | `2.10`  | WAPI version                                              |
+| `port`                | `"443"` | WAPI HTTPS port                                           |
+| `version`             | `"2.10"`| WAPI version                                              |
 | `view`                | `""`    | DNS view containing the zone                              |
-| `sslVerify`           | `false` | Enable TLS certificate verification                       |
+| `sslVerify`           | `true`  | Enable TLS certificate verification                       |
 | `httpRequestTimeout`  | `60`    | Per-request timeout in seconds                            |
 | `httpPoolConnections` | `10`    | Max idle connections to Infoblox                          |
 | `ttl`                 | `300`   | TTL set on created TXT records                            |
 | `useTtl`              | `false` | Whether to set the TTL field on TXT records               |
-| `usernameSecretRef`   | -       | Reference to the Secret key holding the Infoblox username |
-| `passwordSecretRef`   | -       | Reference to the Secret key holding the Infoblox password |
+| `usernameSecretRef`   | -       | **Required.** Reference to the Secret key holding the Infoblox username |
+| `passwordSecretRef`   | -       | **Required.** Reference to the Secret key holding the Infoblox password |

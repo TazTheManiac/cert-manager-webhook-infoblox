@@ -58,10 +58,12 @@ func TestLoadConfig_Nil(t *testing.T) {
 	t.Log("loading config from nil, expecting all defaults to be applied")
 	cfg, err := loadConfig(nil)
 	require.NoError(t, err)
-	t.Logf("port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
-		cfg.Port, cfg.Version, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
+	t.Logf("port=%s version=%s sslVerify=%v httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
+		cfg.Port, cfg.Version, cfg.SslVerify, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
 	assert.Equal(t, defaultPort, cfg.Port)
 	assert.Equal(t, defaultVersion, cfg.Version)
+	require.NotNil(t, cfg.SslVerify)
+	assert.True(t, *cfg.SslVerify)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
 	assert.Equal(t, defaultHTTPPoolConnections, cfg.HTTPPoolConnections)
 	assert.Equal(t, defaultTTL, cfg.TTL)
@@ -93,13 +95,14 @@ func TestLoadConfig_Valid(t *testing.T) {
 	cfg, err := loadConfig(&raw)
 	require.NoError(t, err)
 	t.Logf("host=%s port=%s version=%s view=%s sslVerify=%v httpRequestTimeout=%d httpPoolConnections=%d ttl=%d useTtl=%v",
-		cfg.Host, cfg.Port, cfg.Version, cfg.View, cfg.SslVerify, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL, cfg.UseTTL)
+		cfg.Host, cfg.Port, cfg.Version, cfg.View, *cfg.SslVerify, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL, cfg.UseTTL)
 
 	assert.Equal(t, "infoblox.example.com", cfg.Host)
 	assert.Equal(t, "8443", cfg.Port)
 	assert.Equal(t, "2.11", cfg.Version)
 	assert.Equal(t, "External", cfg.View)
-	assert.True(t, cfg.SslVerify)
+	require.NotNil(t, cfg.SslVerify)
+	assert.True(t, *cfg.SslVerify)
 	assert.Equal(t, 90, cfg.HTTPRequestTimeout)
 	assert.Equal(t, 20, cfg.HTTPPoolConnections)
 	assert.Equal(t, uint32(600), cfg.TTL)
@@ -119,10 +122,12 @@ func TestApplyDefaults_AllEmpty(t *testing.T) {
 	t.Log("applying defaults to zero-value config, all fields should be filled in")
 	cfg := infobloxConfig{}
 	applyDefaults(&cfg)
-	t.Logf("port=%s version=%s httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
-		cfg.Port, cfg.Version, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
+	t.Logf("port=%s version=%s sslVerify=%v httpRequestTimeout=%d httpPoolConnections=%d ttl=%d",
+		cfg.Port, cfg.Version, cfg.SslVerify, cfg.HTTPRequestTimeout, cfg.HTTPPoolConnections, cfg.TTL)
 	assert.Equal(t, defaultPort, cfg.Port)
 	assert.Equal(t, defaultVersion, cfg.Version)
+	require.NotNil(t, cfg.SslVerify)
+	assert.True(t, *cfg.SslVerify)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
 	assert.Equal(t, defaultHTTPPoolConnections, cfg.HTTPPoolConnections)
 	assert.Equal(t, defaultTTL, cfg.TTL)
@@ -154,6 +159,16 @@ func TestApplyDefaults_NegativeTimeoutGetsDefault(t *testing.T) {
 	applyDefaults(&cfg)
 	t.Logf("after applyDefaults: httpRequestTimeout=%d (default=%d)", cfg.HTTPRequestTimeout, defaultHTTPRequestTimeout)
 	assert.Equal(t, defaultHTTPRequestTimeout, cfg.HTTPRequestTimeout)
+}
+
+func TestLoadConfig_SslVerifyFalse(t *testing.T) {
+	t.Log("explicit sslVerify=false must be preserved, not overridden by applyDefaults")
+	raw := apiextensionsv1.JSON{Raw: []byte(`{"sslVerify": false}`)}
+	cfg, err := loadConfig(&raw)
+	require.NoError(t, err)
+	t.Logf("sslVerify=%v (expected false)", cfg.SslVerify)
+	require.NotNil(t, cfg.SslVerify)
+	assert.False(t, *cfg.SslVerify)
 }
 
 // ────────────────────────────────────────────────────────────────────────────

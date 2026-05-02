@@ -38,6 +38,7 @@ const (
 	// default configuration values.
 	defaultPort                = "443"
 	defaultVersion             = "2.10"
+	defaultSslVerify           = true
 	defaultHTTPRequestTimeout  = 60
 	defaultHTTPPoolConnections = 10
 	defaultTTL                 = uint32(300)
@@ -82,7 +83,9 @@ type infobloxConfig struct {
 	// View is the DNS view that contains the zone to be managed.
 	View string `json:"view"`
 	// SslVerify enables TLS certificate verification when calling the WAPI.
-	SslVerify bool `json:"sslVerify"`
+	// Defaults to true; set to false only if Infoblox uses a self-signed or
+	// private CA certificate.
+	SslVerify *bool `json:"sslVerify"`
 	// HTTPRequestTimeout is the per-request timeout in seconds (default: 60).
 	HTTPRequestTimeout int `json:"httpRequestTimeout"`
 	// HTTPPoolConnections is the maximum number of idle connections to the
@@ -234,6 +237,10 @@ func applyDefaults(cfg *infobloxConfig) {
 	if cfg.Version == "" {
 		cfg.Version = defaultVersion
 	}
+	if cfg.SslVerify == nil {
+		v := defaultSslVerify
+		cfg.SslVerify = &v
+	}
 	if cfg.HTTPRequestTimeout <= 0 {
 		cfg.HTTPRequestTimeout = defaultHTTPRequestTimeout
 	}
@@ -269,7 +276,7 @@ func (s *infobloxDNSSolver) newIBConnector(cfg *infobloxConfig, namespace string
 	}
 
 	transportCfg := ibclient.NewTransportConfig(
-		strconv.FormatBool(cfg.SslVerify),
+		strconv.FormatBool(*cfg.SslVerify),
 		cfg.HTTPRequestTimeout,
 		cfg.HTTPPoolConnections,
 	)
