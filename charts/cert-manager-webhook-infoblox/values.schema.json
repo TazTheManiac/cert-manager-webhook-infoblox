@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "cert-manager-webhook-infoblox",
+  "description": "Helm chart values for the cert-manager ACME DNS01 webhook backed by Infoblox WAPI.",
+  "type": "object",
+  "required": ["groupName"],
+  "properties": {
+    "groupName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique group name identifying this webhook (e.g. acme.mycompany.com). Must match the group name referenced in each Issuer's webhook stanza."
+    },
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of webhook pod replicas."
+    },
+    "certManager": {
+      "type": "object",
+      "description": "Reference to the cert-manager installation.",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "description": "Namespace where cert-manager is installed."
+        },
+        "serviceAccountName": {
+          "type": "string",
+          "description": "ServiceAccount name used by cert-manager."
+        }
+      },
+      "additionalProperties": false
+    },
+    "credentialsSecret": {
+      "type": "object",
+      "description": "Kubernetes Secret that holds the Infoblox credentials.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the Secret in the same namespace as the webhook."
+        }
+      },
+      "additionalProperties": false
+    },
+    "rootCACertificate": {
+      "type": "object",
+      "description": "Settings for the self-signed root CA certificate.",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Validity duration of the root CA certificate (Go duration string, e.g. 43800h)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "servingCertificate": {
+      "type": "object",
+      "description": "Settings for the webhook serving certificate.",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Validity duration of the serving certificate (Go duration string, e.g. 8760h)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "image": {
+      "type": "object",
+      "description": "Webhook container image settings.",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "description": "Container image repository."
+        },
+        "tag": {
+          "type": "string",
+          "description": "Container image tag. Defaults to the chart appVersion when empty."
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"],
+          "description": "Image pull policy."
+        }
+      },
+      "additionalProperties": false
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "description": "Optional list of image pull secrets for private registries.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "nameOverride": {
+      "type": "string",
+      "description": "Override the chart name portion of resource names."
+    },
+    "fullnameOverride": {
+      "type": "string",
+      "description": "Override the full resource name prefix."
+    },
+    "podAnnotations": {
+      "type": "object",
+      "description": "Annotations added to every webhook pod.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "service": {
+      "type": "object",
+      "description": "Kubernetes Service settings for the webhook.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"],
+          "description": "Service type."
+        },
+        "port": {
+          "type": "integer",
+          "description": "Service port."
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations added to the Service.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object",
+      "description": "CPU/memory resource requests and limits for the webhook container.",
+      "additionalProperties": true
+    },
+    "nodeSelector": {
+      "type": "object",
+      "description": "Node selector labels for pod scheduling.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "tolerations": {
+      "type": "array",
+      "description": "Tolerations for pod scheduling.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "affinity": {
+      "type": "object",
+      "description": "Affinity rules for pod scheduling.",
+      "additionalProperties": true
+    },
+    "topologySpreadConstraints": {
+      "type": "array",
+      "description": "Topology spread constraints (useful for multi-zone clusters).",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "podDisruptionBudget": {
+      "type": "object",
+      "description": "Pod Disruption Budget settings.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable the PodDisruptionBudget. Recommended for production deployments."
+        },
+        "minAvailable": {
+          "oneOf": [
+            {"type": "integer", "minimum": 0},
+            {"type": "string"}
+          ],
+          "description": "Minimum number or percentage of pods that must remain available (e.g. 1 or \"50%\")."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
