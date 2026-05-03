@@ -1,3 +1,5 @@
-_out
-_test
-testdata
+*
+!README.md
+!index.yaml
+!artifacthub-repo.yml
+!.gitignore
