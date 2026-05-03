@@ -4,14 +4,19 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'Dockerfile'
+      - 'go.mod'
+      - 'go.sum'
+      - '**.go'
+      - '!**_test.go'
 
 jobs:
   docker:
-    name: Build, scan, and push Docker image
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
 
     steps:
       - name: Checkout
@@ -42,19 +47,6 @@ jobs:
           tags: |
             tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
             tazthemaniac/cert-manager-webhook-infoblox:latest
-
-      - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
-          format: sarif
-          output: trivy-results.sarif
-
-      - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
-        with:
-          sarif_file: trivy-results.sarif
 
       - name: Push image
         run: |

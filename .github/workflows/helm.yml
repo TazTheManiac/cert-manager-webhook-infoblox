@@ -1,19 +1,16 @@
 name: Helm
 
 on:
-  workflow_run:
-    workflows:
-      - Docker
-    types:
-      - completed
+  push:
     branches:
       - master
+    paths:
+      - 'charts/**'
 
 jobs:
   helm:
     name: Release Helm chart
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
 

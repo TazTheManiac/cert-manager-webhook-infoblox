@@ -1,9 +1,10 @@
 # cert-manager-webhook-infoblox
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/cert-manager-webhook-infoblox)](https://artifacthub.io/packages/search?repo=cert-manager-webhook-infoblox)
-[![Docker Pulls](https://img.shields.io/docker/pulls/tazthemaniac/cert-manager-webhook-infoblox)](https://hub.docker.com/r/tazthemaniac/cert-manager-webhook-infoblox)
 [![Docker Hub](https://img.shields.io/docker/v/tazthemaniac/cert-manager-webhook-infoblox?sort=semver&label=docker%20hub)](https://hub.docker.com/r/tazthemaniac/cert-manager-webhook-infoblox)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tazthemaniac/cert-manager-webhook-infoblox)](https://hub.docker.com/r/tazthemaniac/cert-manager-webhook-infoblox)
 [![Docker](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/docker.yml/badge.svg)](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/docker.yml)
+[![Trivy](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/trivy.yml/badge.svg)](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/trivy.yml)
 [![Helm](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/helm.yml/badge.svg)](https://github.com/tazthemaniac/cert-manager-webhook-infoblox/actions/workflows/helm.yml)
 
 Forked from the [cert-manager/webhook-example](https://github.com/cert-manager/webhook-example) repository.  

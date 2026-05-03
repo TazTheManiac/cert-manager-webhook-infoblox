@@ -1,0 +1,58 @@
+name: Trivy
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Dockerfile'
+      - 'go.mod'
+      - 'go.sum'
+      - '**.go'
+      - '!**_test.go'
+  schedule:
+    - cron: '0 4 * * 1'   # every Monday at 06:00 CEST (04:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  trivy:
+    name: Build and scan Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4.0.0
+
+      - name: Get image tag from Chart.yaml
+        id: chart
+        run: |
+          echo "tag=$(grep '^appVersion:' charts/cert-manager-webhook-infoblox/Chart.yaml | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
+
+      - name: Build image
+        uses: docker/build-push-action@v7.1.0
+        with:
+          context: .
+          push: false
+          load: true
+          tags: tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.32.0
+        with:
+          image-ref: tazthemaniac/cert-manager-webhook-infoblox:${{ steps.chart.outputs.tag }}
+          format: sarif
+          output: trivy-results.sarif
+          exit-code: '1'
+          severity: HIGH,CRITICAL
+
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
