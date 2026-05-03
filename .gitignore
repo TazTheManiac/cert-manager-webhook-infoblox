@@ -1,26 +1,52 @@
-# ── Binaries / build artefacts ────────────────────────────────────────────────
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Code coverage profiles and other test artifacts
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
+.env
+
+# Editor/IDE
+# .idea/
+.vscode/
+
+# ── Project specific ──────────────────────────────────────────────────────────
+
+# Built binaries
 /webhook
-/cert-manager-webhook-infoblox
+
+# Build and tool output directories
 /_out/
 /bin/
-coverage.out
-coverage.html
-trivy-report.json
 
-# ── Go toolchain ──────────────────────────────────────────────────────────────
-*.test
+# Profiling
 *.prof
 
-# ── Editor / OS ───────────────────────────────────────────────────────────────
-.idea/
-.vscode/
-*.swp
-*.swo
-.DS_Store
-Thumbs.db
+# Trivy scan report
+trivy-report.json
 
-# ── Environment / secrets (never commit real credentials) ────────────────────
-.env
-*.env
+# Real credentials and config
 testdata/infoblox/config.json
 testdata/infoblox/credentials.yaml
+
+# Editor artifacts
+*.swp
+*.swo
