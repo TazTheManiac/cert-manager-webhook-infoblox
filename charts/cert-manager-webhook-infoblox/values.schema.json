@@ -140,6 +140,16 @@
       "description": "CPU/memory resource requests and limits for the webhook container.",
       "additionalProperties": true
     },
+    "podSecurityContext": {
+      "type": "object",
+      "description": "Pod-level securityContext. Fully replaces defaults.",
+      "additionalProperties": true
+    },
+    "securityContext": {
+      "type": "object",
+      "description": "Container-level securityContext for the webhook container. Fully replaces defaults (no deep-merge).",
+      "additionalProperties": true
+    },
     "nodeSelector": {
       "type": "object",
       "description": "Node selector labels for pod scheduling.",

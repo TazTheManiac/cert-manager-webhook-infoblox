@@ -58,6 +58,23 @@ resources: {}
 #   cpu: 50m
 #   memory: 64Mi
 
+# Pod-level security context applied to the webhook Pod.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container-level security context applied to the webhook container.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
 nodeSelector: {}
 
 tolerations: []
