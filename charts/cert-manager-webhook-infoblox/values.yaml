@@ -44,6 +44,9 @@ fullnameOverride: ""
 # Optional annotations added to every pod.
 podAnnotations: {}
 
+# Port the webhook container listens on (--secure-port).
+containerPort: 8443
+
 service:
   type: ClusterIP
   port: 443
@@ -57,6 +60,23 @@ resources: {}
 # requests:
 #   cpu: 50m
 #   memory: 64Mi
+
+# Pod-level security context applied to the webhook Pod.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container-level security context applied to the webhook container.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
 
 nodeSelector: {}
 

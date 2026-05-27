@@ -112,6 +112,12 @@
         "type": "string"
       }
     },
+    "containerPort": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "description": "Port the webhook container listens on (passed as --secure-port to the server)."
+    },
     "service": {
       "type": "object",
       "description": "Kubernetes Service settings for the webhook.",
@@ -138,6 +144,16 @@
     "resources": {
       "type": "object",
       "description": "CPU/memory resource requests and limits for the webhook container.",
+      "additionalProperties": true
+    },
+    "podSecurityContext": {
+      "type": "object",
+      "description": "Pod-level securityContext. Fully replaces defaults.",
+      "additionalProperties": true
+    },
+    "securityContext": {
+      "type": "object",
+      "description": "Container-level securityContext for the webhook container. Fully replaces defaults (no deep-merge).",
       "additionalProperties": true
     },
     "nodeSelector": {

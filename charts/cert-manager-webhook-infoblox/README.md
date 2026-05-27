@@ -85,6 +85,7 @@ spec:
 | `certManager.namespace`            | `cert-manager`                               | Namespace where cert-manager is installed                                            |
 | `certManager.serviceAccountName`   | `cert-manager`                               | cert-manager's ServiceAccount name                                                   |
 | `replicaCount`                     | `1`                                          | Number of webhook pod replicas                                                       |
+| `containerPort`                    | `8443`                                       | Port the webhook container listens on (passed as `--secure-port` to the server)      |
 | `image.repository`                 | `tazthemaniac/cert-manager-webhook-infoblox` | Container image repository                                                           |
 | `image.tag`                        | `""`                                         | Container image tag, defaults to the chart appVersion                                |
 | `image.pullPolicy`                 | `IfNotPresent`                               | Image pull policy                                                                    |
@@ -96,6 +97,8 @@ spec:
 | `service.port`                     | `443`                                        | Kubernetes service port                                                              |
 | `service.annotations`              | `{}`                                         | Annotations added to the service                                                     |
 | `resources`                        | `{}`                                         | Resource requests and limits for the webhook container                               |
+| `podSecurityContext`               | see `values.yaml`                            | Pod-level securityContext. Overrides fully replace the defaults (no deep-merge).     |
+| `securityContext`                  | see `values.yaml`                            | Container-level securityContext. Overrides fully replace the defaults.               |
 | `nodeSelector`                     | `{}`                                         | Node selector for the webhook pod                                                    |
 | `tolerations`                      | `[]`                                         | Tolerations for the webhook pod                                                      |
 | `affinity`                         | `{}`                                         | Affinity rules for the webhook pod                                                   |
@@ -131,3 +134,14 @@ spec:
 | New `credentialsSecret.name` Helm value (default: `infoblox-credentials`) | Set `--set credentialsSecret.name=<name>` at upgrade time if your credentials Secret has a different name.                                                      |
 | `groupName` is now schema-validated as non-empty                          | Always was required; `helm upgrade` will now fail explicitly if it is not set.                                                                                  |
 | Runtime changed to `distroless/static-debian12:nonroot` (UID 65532)       | Update any policy/rule that pinned UID `65534`.                                                                                                                 |
+
+## Changelog
+
+### 2.1.0
+
+- Pod and container `securityContext` are now configurable via the `podSecurityContext` and `securityContext` chart values. Defaults preserve the previously hardcoded values, so existing installs are unaffected. Overrides fully replace defaults (no deep-merge).
+- The webhook container port is now configurable via the `containerPort` value (default `8443`). This sets both the container port and the `--secure-port` server argument. The default was changed from `443` to `8443` to allow running as a non-root user without extra capabilities.
+
+### 2.0.0
+
+- Initial 2.x release. See "Upgrading from 1.x" above for breaking changes.
