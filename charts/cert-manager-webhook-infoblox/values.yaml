@@ -44,6 +44,9 @@ fullnameOverride: ""
 # Optional annotations added to every pod.
 podAnnotations: {}
 
+# Port the webhook container listens on (--secure-port).
+containerPort: 8443
+
 service:
   type: ClusterIP
   port: 443

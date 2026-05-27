@@ -112,6 +112,12 @@
         "type": "string"
       }
     },
+    "containerPort": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "description": "Port the webhook container listens on (passed as --secure-port to the server)."
+    },
     "service": {
       "type": "object",
       "description": "Kubernetes Service settings for the webhook.",
