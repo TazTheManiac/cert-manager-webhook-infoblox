@@ -48,6 +48,13 @@ spec:
           env:
             - name: GROUP_NAME
               value: {{ .Values.groupName | quote }}
+          {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: https
               containerPort: {{ .Values.containerPort }}
@@ -83,12 +90,18 @@ spec:
             - name: certs
               mountPath: /tls
               readOnly: true
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: certs
           secret:
             secretName: {{ include "webhook.servingCertificate" . }}
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

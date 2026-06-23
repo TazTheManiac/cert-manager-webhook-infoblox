@@ -78,6 +78,12 @@ securityContext:
     drop:
       - ALL
 
+# Additional volumes on the output Deployment definition.
+volumes: []
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+
 nodeSelector: {}
 
 tolerations: []
@@ -91,3 +97,9 @@ topologySpreadConstraints: []
 podDisruptionBudget:
   enabled: false
   # minAvailable: 1
+
+# Additional environment variables to set in the container.
+env: []
+
+# Additional environment variables sourced from configMaps and/or Secrets
+envFrom: []

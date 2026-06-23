@@ -156,6 +156,16 @@
       "description": "Container-level securityContext for the webhook container. Fully replaces defaults (no deep-merge).",
       "additionalProperties": true
     },
+    "volumes": {
+      "type": "array",
+      "description": "Additional volumes on the output Deployment definition.",
+      "additionalProperties": true
+    },
+    "volumeMounts": {
+      "type": "array",
+      "description": "Additional volumeMounts on the output Deployment definition.",
+      "additionalProperties": true
+    },
     "nodeSelector": {
       "type": "object",
       "description": "Node selector labels for pod scheduling.",
@@ -201,6 +211,16 @@
         }
       },
       "additionalProperties": false
+    },
+    "env": {
+      "type": "array",
+      "description": "Additional environment variables to set in the container.",
+      "additionalProperties": true
+    },
+    "envFrom": {
+      "type": "array",
+      "description": "Additional environment variables sourced from configMaps and/or Secrets",
+      "additionalProperties": true
     }
   },
   "additionalProperties": false
