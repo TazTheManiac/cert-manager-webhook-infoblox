@@ -10,6 +10,7 @@ on:
       - 'go.sum'
       - '**.go'
       - '!**_test.go'
+  workflow_dispatch:
 
 jobs:
   docker:
