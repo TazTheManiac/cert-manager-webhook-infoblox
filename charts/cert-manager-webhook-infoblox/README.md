@@ -99,12 +99,16 @@ spec:
 | `resources`                        | `{}`                                         | Resource requests and limits for the webhook container                               |
 | `podSecurityContext`               | see `values.yaml`                            | Pod-level securityContext. Overrides fully replace the defaults (no deep-merge).     |
 | `securityContext`                  | see `values.yaml`                            | Container-level securityContext. Overrides fully replace the defaults.               |
+| `volumes`                          | `[]`                                         | Additional volumes on the output Deployment definition                               |
+| `volumeMounts`                     | `[]`                                         | Additional volumeMounts on the output Deployment definition                          |
 | `nodeSelector`                     | `{}`                                         | Node selector for the webhook pod                                                    |
 | `tolerations`                      | `[]`                                         | Tolerations for the webhook pod                                                      |
 | `affinity`                         | `{}`                                         | Affinity rules for the webhook pod                                                   |
 | `topologySpreadConstraints`        | `[]`                                         | Topology spread constraints for the webhook pod                                      |
 | `podDisruptionBudget.enabled`      | `false`                                      | Enable a PodDisruptionBudget for the webhook                                         |
 | `podDisruptionBudget.minAvailable` | -                                            | Minimum pods that must remain available; integer or percentage (e.g. `1` or `"50%"`) |
+| `env`                              | `[]`                                         | Additional environment variables to set in the container                             |
+| `envFrom`                          | `[]`                                         | Additional environment variables sourced from configMaps and/or Secrets              |
 
 ## Issuer `config` reference
 
@@ -136,6 +140,13 @@ spec:
 | Runtime changed to `distroless/static-debian12:nonroot` (UID 65532)       | Update any policy/rule that pinned UID `65534`.                                                                                                                 |
 
 ## Changelog
+
+### 2.2.0
+
+Thank you [Ramshield](https://github.com/Ramshield) for these additions
+
+- Added the ability to set extra `env` and `envFrom` variables using the Helm chart.
+- Added the ability to define aditional `volumes` and `volumeMounts` using the Helm chart.
 
 ### 2.1.0
 
