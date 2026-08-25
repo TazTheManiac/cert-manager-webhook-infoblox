@@ -1,5 +1,5 @@
 # ─── Stage 1: resolve dependencies ───────────────────────────────────────────
-FROM golang:1.26.4-alpine AS deps
+FROM golang:1.26.7-alpine AS deps
 
 LABEL org.opencontainers.image.source="https://github.com/tazthemaniac/cert-manager-webhook-infoblox"
 
