@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   cert-manager-webhook-infoblox:
   - apiVersion: v2
+    appVersion: 2.2.1
+    created: "2026-11-13T15:43:21.665856919Z"
+    description: cert-manager DNS01 webhook solver for Infoblox WAPI
+    digest: 872f4406108e6d44a9070ba39aad14a18b8b16418c0415d7472195f5bbb35ed6
+    home: https://github.com/tazthemaniac/cert-manager-webhook-infoblox
+    keywords:
+    - cert-manager
+    - webhook
+    - dns01
+    - infoblox
+    - wapi
+    - acme
+    maintainers:
+    - name: tazthemaniac
+    name: cert-manager-webhook-infoblox
+    sources:
+    - https://github.com/tazthemaniac/cert-manager-webhook-infoblox
+    type: application
+    urls:
+    - https://github.com/TazTheManiac/cert-manager-webhook-infoblox/releases/download/cert-manager-webhook-infoblox-2.2.1/cert-manager-webhook-infoblox-2.2.1.tgz
+    version: 2.2.1
+  - apiVersion: v2
     appVersion: 2.2.0
     created: "2026-06-23T16:40:56.159250832Z"
     description: cert-manager DNS01 webhook solver for Infoblox WAPI
@@ -172,4 +194,4 @@ entries:
     urls:
     - https://github.com/TazTheManiac/cert-manager-webhook-infoblox/releases/download/cert-manager-webhook-infoblox-0.0.1/cert-manager-webhook-infoblox-0.0.1.tgz
     version: 0.0.1
-generated: "2026-06-23T16:40:56.159297778Z"
+generated: "2026-11-13T15:43:21.665883939Z"
